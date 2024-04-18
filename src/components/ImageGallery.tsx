@@ -2,11 +2,12 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Box, Paper } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { missingImagesUrl } from '../routes';
 
 const fadeDurationMs = 500;
 const fadeDurationS = 0.5;
 const buttonsWidth = 75;
+const missingImagesUrl =
+  'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.istockphoto.com%2Fvectors%2Fno-image-available-sign-vector-id1138179183%3Fk%3D6%26m%3D1138179183%26s%3D612x612%26w%3D0%26h%3DprMYPP9mLRNpTp3XIykjeJJ8oCZRhb2iez6vKs8a8eE%3D&f=1&nofb=1&ipt=fa5858195f77a712c882ee2f91427ddfcc7f7e3da765205ed3120aba5e250977&ipo=images';
 
 interface ImageGalleryProps {
   imgSourcesList: string[];

@@ -30,11 +30,9 @@ import {
 } from '@mui/material';
 import { ReactNode, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { UserRead, eseguiLogout } from '../api/utenti';
 import { useAuthentication } from '../contexts/AuthenticationContext';
 import { usePaletteMode } from '../contexts/PaletteModeContext';
-import { useDeviceFeatures } from './hooks';
-import { ROUTES } from './routes';
+import { useDeviceFeatures } from '../hooks';
 
 interface PageLink {
   label: string;
@@ -46,33 +44,7 @@ interface PageLinkBuilderProps {
   links: PageLink[];
 }
 
-const links = [
-  {
-    label: 'Home',
-    url: ROUTES.home,
-    icon: <CottageIcon />,
-  },
-  {
-    label: 'Spazi',
-    url: ROUTES.spazi,
-    icon: <ComputerIcon />,
-  },
-  {
-    label: 'Strumentazioni',
-    url: ROUTES.strumentazioni,
-    icon: <ConstructionIcon />,
-  },
-  {
-    label: 'Contatti',
-    url: ROUTES.contatti,
-    icon: <ContactPhoneIcon />,
-  },
-  {
-    label: 'Regolamento',
-    url: ROUTES.regolamento,
-    icon: <ArticleIcon />,
-  },
-];
+const links: PageLink[] = [];
 const DRAWER_WIDTH = 360;
 
 function shouldHighlight(url: string, pathname: string) {

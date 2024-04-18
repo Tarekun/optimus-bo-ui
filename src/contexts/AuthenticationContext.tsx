@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { PropsWithChildren, createContext, useContext } from 'react';
-import { UserRead, getUtenteCorrente } from '../api/utenti';
 
 type useAuthenticationReturn = {
   utente: UserRead | null;

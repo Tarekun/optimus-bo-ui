@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { PropsWithChildren } from 'react';
-import { usePaletteMode } from '../../contexts/PaletteModeContext';
+import { usePaletteMode } from '../contexts/PaletteModeContext';
 
 type CommonAccordionProps = PropsWithChildren & {
   title: string;

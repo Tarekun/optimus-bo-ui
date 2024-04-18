@@ -1,10 +1,6 @@
-import { ChildrenType } from '../core/types';
+import { PropsWithChildren } from 'react';
 import DefaultLayout from './DefaultLayout';
 
-interface LayoutProviderProps {
-  children?: ChildrenType;
-}
-
-export default function LayoutProvider({ children }: LayoutProviderProps) {
+export default function LayoutProvider({ children }: PropsWithChildren) {
   return <DefaultLayout>{children}</DefaultLayout>;
 }

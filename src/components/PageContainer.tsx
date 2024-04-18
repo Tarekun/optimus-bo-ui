@@ -1,8 +1,7 @@
 import { Box, LinearProgress, Paper, PaperProps } from '@mui/material';
 import { PropsWithChildren } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthentication } from '../../contexts/AuthenticationContext';
-import { ROUTES } from '../routes';
+import { useAuthentication } from '../contexts/AuthenticationContext';
 
 const dimensioneCardMassimaPx = 1300;
 

@@ -1,15 +1,10 @@
 import { Box } from '@mui/material';
 import { orange } from '@mui/material/colors';
-import { useEffect } from 'react';
+import { PropsWithChildren, useEffect } from 'react';
 import { usePaletteMode } from '../contexts/PaletteModeContext';
-import Navbar from '../core/Navbar';
-import { ChildrenType } from '../core/types';
+import Navbar from '../components/Navbar';
 
-interface DefaultLayoutProps {
-  children?: ChildrenType;
-}
-
-export default function DefaultLayout({ children }: DefaultLayoutProps) {
+export default function DefaultLayout({ children }: PropsWithChildren) {
   const { mode } = usePaletteMode();
 
   useEffect(() => {
