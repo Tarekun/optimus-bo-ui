@@ -1,12 +1,7 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import ArticleIcon from '@mui/icons-material/Article';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import CloseIcon from '@mui/icons-material/Close';
-import ComputerIcon from '@mui/icons-material/Computer';
-import ConstructionIcon from '@mui/icons-material/Construction';
-import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import ContrastIcon from '@mui/icons-material/Contrast';
-import CottageIcon from '@mui/icons-material/Cottage';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 import {
@@ -34,17 +29,16 @@ import { useAuthentication } from '../contexts/AuthenticationContext';
 import { usePaletteMode } from '../contexts/PaletteModeContext';
 import { useDeviceFeatures } from '../hooks';
 
-interface PageLink {
+export interface PageLink {
   label: string;
   url: string;
-  icon: ReactNode;
+  icon?: ReactNode;
 }
 
 interface PageLinkBuilderProps {
   links: PageLink[];
 }
 
-const links: PageLink[] = [];
 const DRAWER_WIDTH = 360;
 
 function shouldHighlight(url: string, pathname: string) {
@@ -163,7 +157,11 @@ function ProfileMenu({ utente }: ProfileMenuProps) {
   );
 }
 
-export default function Navbar() {
+interface NavbarProps {
+  links: PageLink[];
+  sudoLinks?: PageLink[];
+}
+export default function Navbar({links, sudoLinks=[]}: NavbarProps) {
   const [openDrawer, setOpenDrawer] = useState(false);
   const { isMobile } = useDeviceFeatures();
 
@@ -174,11 +172,7 @@ export default function Navbar() {
   const actualLinks = isSudo
     ? [
         ...links,
-        {
-          label: 'Prenotazioni',
-          url: ROUTES.prenotazioni,
-          icon: <AutoStoriesIcon />,
-        },
+        ...sudoLinks
       ]
     : links;
 
