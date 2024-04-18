@@ -1,44 +1,51 @@
 import { useQuery } from '@tanstack/react-query';
 import { PropsWithChildren, createContext, useContext } from 'react';
 
-type useAuthenticationReturn = {
-  utente: UserRead | null;
+type useAuthenticationReturn<T> = {
+  user: T | null;
   isSudo: boolean;
   isLoading: boolean;
   refetchUser: () => void;
 };
-const nullUser: useAuthenticationReturn = {
-  utente: null,
+
+const AuthenticationContext = createContext<useAuthenticationReturn<any>>({
+  user: null,
   isSudo: false,
-  isLoading: false,
   refetchUser: () => {},
+  isLoading: false,
+});
+
+type AuthenticationProviderProps<T> = PropsWithChildren & {
+  fetchCurrentUser: () => Promise<T>;
+  isSudo?: (user: T) => boolean;
 };
-
-const AuthenticationContext = createContext<useAuthenticationReturn>(nullUser);
-
-export default function AuthenticationProvider({ children }: PropsWithChildren) {
+export default function AuthenticationProvider<T>({
+  children,
+  fetchCurrentUser,
+  isSudo = () => false,
+}: AuthenticationProviderProps<T>) {
   const { data, refetch, isFetching } = useQuery({
-    //riesegui la richiesta quando cambia la pagina
-    //(il login può essere fatto solo navigando a /login e venendo poi rediretti)
-    queryKey: ['utente-corrente'],
+    queryKey: ['authentication-provider-user-fetching'],
     queryFn: () => {
-      return getUtenteCorrente();
+      return fetchCurrentUser();
     },
   });
-  const utente: useAuthenticationReturn = data
+
+  const userData: useAuthenticationReturn<T> = data
     ? {
-        utente: data,
-        isSudo: data.is_superuser,
+        user: data,
+        isSudo: isSudo(data),
         refetchUser: refetch,
         isLoading: isFetching,
       }
     : {
-        ...nullUser,
+        user: null,
+        isSudo: false,
         refetchUser: refetch,
         isLoading: isFetching,
       };
 
-  return <AuthenticationContext.Provider value={utente}>{children}</AuthenticationContext.Provider>;
+  return <AuthenticationContext.Provider value={userData}>{children}</AuthenticationContext.Provider>;
 }
 
 export const useAuthentication = () => useContext(AuthenticationContext);
