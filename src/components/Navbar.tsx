@@ -1,5 +1,4 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import CloseIcon from '@mui/icons-material/Close';
 import ContrastIcon from '@mui/icons-material/Contrast';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -157,11 +156,11 @@ function ProfileMenu({ utente }: ProfileMenuProps) {
   );
 }
 
-interface NavbarProps {
+export interface NavbarProps {
   links: PageLink[];
   sudoLinks?: PageLink[];
 }
-export default function Navbar({links, sudoLinks=[]}: NavbarProps) {
+export default function Navbar({ links, sudoLinks = [] }: NavbarProps) {
   const [openDrawer, setOpenDrawer] = useState(false);
   const { isMobile } = useDeviceFeatures();
 
@@ -169,12 +168,7 @@ export default function Navbar({links, sudoLinks=[]}: NavbarProps) {
   const { swapMode } = usePaletteMode();
   const navigate = useNavigate();
 
-  const actualLinks = isSudo
-    ? [
-        ...links,
-        ...sudoLinks
-      ]
-    : links;
+  const actualLinks = isSudo ? [...links, ...sudoLinks] : links;
 
   return (
     <AppBar position="static" color="primary" enableColorOnDark>

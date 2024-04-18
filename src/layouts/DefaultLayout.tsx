@@ -1,10 +1,11 @@
 import { Box } from '@mui/material';
 import { orange } from '@mui/material/colors';
 import { PropsWithChildren, useEffect } from 'react';
+import Navbar, { NavbarProps } from '../components/Navbar';
 import { usePaletteMode } from '../contexts/PaletteModeContext';
-import Navbar from '../components/Navbar';
 
-export default function DefaultLayout({ children }: PropsWithChildren) {
+type DefaultLayoutProps = PropsWithChildren & NavbarProps & {};
+export default function DefaultLayout({ children, links, sudoLinks }: DefaultLayoutProps) {
   const { mode } = usePaletteMode();
 
   useEffect(() => {
@@ -18,7 +19,7 @@ export default function DefaultLayout({ children }: PropsWithChildren) {
         minHeight: '100vh',
       }}
     >
-      <Navbar />
+      <Navbar links={links} sudoLinks={sudoLinks} />
       <Box
         sx={{
           padding: 2,
