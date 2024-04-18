@@ -8,6 +8,8 @@ type useAuthenticationReturn<T> = {
   refetchUser: () => void;
 };
 
+//TODO: find a better fix for this
+//eslint-disable-next-line @typescript-eslint/no-explicit-any
 const AuthenticationContext = createContext<useAuthenticationReturn<any>>({
   user: null,
   isSudo: false,

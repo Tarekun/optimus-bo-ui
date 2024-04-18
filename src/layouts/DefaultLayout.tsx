@@ -4,7 +4,7 @@ import { PropsWithChildren, useEffect } from 'react';
 import Navbar, { NavbarProps } from '../components/Navbar';
 import { usePaletteMode } from '../contexts/PaletteModeContext';
 
-type DefaultLayoutProps = PropsWithChildren & NavbarProps & {};
+type DefaultLayoutProps = PropsWithChildren & NavbarProps;
 export default function DefaultLayout({ children, links, sudoLinks }: DefaultLayoutProps) {
   const { mode } = usePaletteMode();
 
