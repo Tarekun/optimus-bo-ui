@@ -8,6 +8,7 @@ const dimensioneCardMassimaPx = 1300;
 type PageContainerProps = PropsWithChildren & {
   isLoading?: boolean;
   checkSudo?: boolean;
+  redirectLink?: string;
   paperProps?: PaperProps;
 };
 
@@ -15,12 +16,13 @@ export default function PageContainer({
   children,
   isLoading = false,
   checkSudo = false,
+  redirectLink = '/',
   paperProps = {},
 }: PageContainerProps) {
   const { isSudo } = useAuthentication();
   const navigate = useNavigate();
   if (checkSudo && !isSudo) {
-    navigate(ROUTES.home);
+    navigate(redirectLink);
   }
 
   if (isLoading) {
