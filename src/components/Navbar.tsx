@@ -1,22 +1,16 @@
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import CloseIcon from '@mui/icons-material/Close';
 import ContrastIcon from '@mui/icons-material/Contrast';
-import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 import {
   AppBar,
   Box,
   Button,
-  CircularProgress,
   Divider,
   Drawer,
   IconButton,
   List,
   ListItemButton,
   ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
   Stack,
   Toolbar,
   Tooltip,
@@ -95,66 +89,66 @@ function PageLinkDrawer({ links, onCloseDrawer }: PageLinkBuilderProps & { onClo
   );
 }
 
-interface ProfileMenuProps {
-  utente: UserRead;
-}
-function ProfileMenu({ utente }: ProfileMenuProps) {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const navigate = useNavigate();
+// interface ProfileMenuProps {
+//   user: UserRead;
+// }
+// function ProfileMenu({ user }: ProfileMenuProps) {
+//   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+//   const open = Boolean(anchorEl);
+//   const navigate = useNavigate();
 
-  function logout() {
-    eseguiLogout();
-    navigate(0);
-  }
+//   function logout() {
+//     eseguiLogout();
+//     navigate(0);
+//   }
 
-  return (
-    <>
-      <IconButton
-        size="large"
-        color="inherit"
-        aria-label="Profilo"
-        onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-          setAnchorEl(event.currentTarget);
-        }}
-      >
-        <AccountCircleIcon />
-      </IconButton>
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={() => {
-          setAnchorEl(null);
-        }}
-      >
-        <Typography variant="h6" marginLeft={3} marginRight={3}>
-          Ciao {utente.nome}
-        </Typography>
-        <MenuItem
-          onClick={() => {
-            navigate(ROUTES.profilo);
-            setAnchorEl(null);
-          }}
-        >
-          <ListItemIcon>
-            <AccountCircleIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Profilo</ListItemText>
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            logout();
-          }}
-        >
-          <ListItemIcon>
-            <LogoutIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Log out</ListItemText>
-        </MenuItem>
-      </Menu>
-    </>
-  );
-}
+//   return (
+//     <>
+//       <IconButton
+//         size="large"
+//         color="inherit"
+//         aria-label="Profilo"
+//         onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+//           setAnchorEl(event.currentTarget);
+//         }}
+//       >
+//         <AccountCircleIcon />
+//       </IconButton>
+//       <Menu
+//         anchorEl={anchorEl}
+//         open={open}
+//         onClose={() => {
+//           setAnchorEl(null);
+//         }}
+//       >
+//         <Typography variant="h6" marginLeft={3} marginRight={3}>
+//           Ciao {user.nome}
+//         </Typography>
+//         <MenuItem
+//           onClick={() => {
+//             navigate(ROUTES.profilo);
+//             setAnchorEl(null);
+//           }}
+//         >
+//           <ListItemIcon>
+//             <AccountCircleIcon fontSize="small" />
+//           </ListItemIcon>
+//           <ListItemText>Profilo</ListItemText>
+//         </MenuItem>
+//         <MenuItem
+//           onClick={() => {
+//             logout();
+//           }}
+//         >
+//           <ListItemIcon>
+//             <LogoutIcon fontSize="small" />
+//           </ListItemIcon>
+//           <ListItemText>Log out</ListItemText>
+//         </MenuItem>
+//       </Menu>
+//     </>
+//   );
+// }
 
 export interface NavbarProps {
   links: PageLink[];
@@ -164,7 +158,7 @@ export default function Navbar({ links, sudoLinks = [] }: NavbarProps) {
   const [openDrawer, setOpenDrawer] = useState(false);
   const { isMobile } = useDeviceFeatures();
 
-  const { utente, isLoading, isSudo } = useAuthentication();
+  const { user, isLoading, isSudo } = useAuthentication();
   const { swapMode } = usePaletteMode();
   const navigate = useNavigate();
 
@@ -230,9 +224,9 @@ export default function Navbar({ links, sudoLinks = [] }: NavbarProps) {
         {/*box che occupa tutto lo spazio possibile per forzare i bottoni seguenti ad essere sulla destra */}
         <Box flexGrow={1} />
 
-        {isLoading ? (
+        {/* {isLoading ? (
           <CircularProgress color="inherit" size={30} />
-        ) : utente === null ? (
+        ) : user === null ? (
           <Stack direction="row" spacing={2}>
             {!isMobile && (
               <Button
@@ -258,8 +252,8 @@ export default function Navbar({ links, sudoLinks = [] }: NavbarProps) {
             </Button>
           </Stack>
         ) : (
-          <ProfileMenu utente={utente} />
-        )}
+          <ProfileMenu user={user} />
+        )} */}
         <Tooltip title="Abilita/disabilita la modalità scura">
           <IconButton color="inherit" aria-label="Dark mode" onClick={swapMode}>
             <ContrastIcon />
