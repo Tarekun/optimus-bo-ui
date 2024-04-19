@@ -9,6 +9,18 @@ import LayoutProvider, { SupportedLayouts } from './layouts/LayoutProvider';
 
 const queryClient = new QueryClient();
 
+type YesMuiConfiguration = {
+  configure: true;
+  makeTheme?: (paletteMode: PaletteMode) => ThemeOptions;
+  paletteMode?: undefined;
+};
+type NoMuiConfiguration = {
+  configure: false;
+  makeTheme?: undefined;
+  paletteMode?: undefined;
+};
+type MuiConfiguration = YesMuiConfiguration | NoMuiConfiguration;
+
 type YesUserConfiguration<UserSchema> = {
   configureUsers: true;
   fetchCurrentUser: () => Promise<UserSchema>;
@@ -33,18 +45,16 @@ type PageTitleConfiguration = YesPageTitleConfiguration | NoPageTitleConfigurati
 
 export type OptimusUiAppConfig<UserSchema> = PageTitleConfiguration &
   UserConfiguration<UserSchema> & {
-    configureMui?: boolean;
     configureReactQuery?: boolean;
-    themeOverrides?: ThemeOptions;
     navbarLinks?: PageLink[];
     sudoNavbarLinks?: PageLink[];
     layout?: SupportedLayouts;
+    muiConfiguration?: MuiConfiguration;
   };
 export default function OptimusUiApp<UserSchema>({
   children,
-  configureMui = false,
+  muiConfiguration = { configure: false },
   configureReactQuery = false,
-  themeOverrides,
   navbarLinks = [],
   sudoNavbarLinks = [],
   configurePageTitles = false,
@@ -56,10 +66,15 @@ export default function OptimusUiApp<UserSchema>({
   isSudo = () => false,
   layout = 'default',
 }: PropsWithChildren & OptimusUiAppConfig<UserSchema>) {
+  const { configure: configureMui, makeTheme = () => ({}), paletteMode: userPalette } = muiConfiguration;
+
   const [paletteMode, setPaletteMode] = useState<PaletteMode>('light');
+  const paletteInUse = userPalette || paletteMode;
+  const themeOverrides: ThemeOptions = makeTheme(paletteInUse);
   const theme = createTheme({
     palette: {
-      mode: paletteMode,
+      mode: paletteInUse,
+      ...themeOverrides?.palette,
     },
     ...themeOverrides,
   });
@@ -81,18 +96,19 @@ export default function OptimusUiApp<UserSchema>({
       {children}
     </AuthenticationProvider>
   );
-  let content = children;
+
+  let content = (
+    <PaletteModeProvider setMode={setPaletteMode}>
+      <LayoutProvider layout={layout} links={navbarLinks} sudoLinks={sudoNavbarLinks}>
+        {children}
+      </LayoutProvider>
+    </PaletteModeProvider>
+  );
   // since these are rendered right away are to be checked starting from the innermost to the outermost, NOT viceversa
   if (configureUsers) content = withUsers(content);
   if (configurePageTitles) content = withPageTitles(content);
   if (configureReactQuery) content = withReactQuery(content);
   if (configureMui) content = withMui(content);
 
-  return (
-    <PaletteModeProvider mode={paletteMode} setMode={setPaletteMode}>
-      <LayoutProvider layout={layout} links={navbarLinks} sudoLinks={sudoNavbarLinks}>
-        {content}
-      </LayoutProvider>
-    </PaletteModeProvider>
-  );
+  return <div>{content}</div>;
 }

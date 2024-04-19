@@ -1,4 +1,4 @@
-import { PaletteMode } from '@mui/material';
+import { PaletteMode, useTheme } from '@mui/material';
 import { PropsWithChildren, createContext, useContext, useEffect } from 'react';
 
 const paletteModeName = 'PALETTE-MODE';
@@ -15,10 +15,13 @@ const PaletteModeContext = createContext<usePaletteModeReturn>({
 });
 
 type PaletteModeProviderProps = PropsWithChildren & {
-  mode: PaletteMode;
   setMode: (newMode: PaletteMode) => void;
 };
-export default function PaletteModeProvider({ children, mode, setMode }: PaletteModeProviderProps) {
+export default function PaletteModeProvider({ children, setMode }: PaletteModeProviderProps) {
+  const {
+    palette: { mode },
+  } = useTheme();
+
   useEffect(() => {
     const storedMode = localStorage.getItem(paletteModeName);
     if (storedMode === 'light' || storedMode === 'dark') {
