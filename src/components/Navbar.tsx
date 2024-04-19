@@ -15,6 +15,7 @@ import {
   Toolbar,
   Tooltip,
   Typography,
+  useTheme,
 } from '@mui/material';
 import { ReactNode, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -160,7 +161,9 @@ export default function Navbar({ links, sudoLinks = [] }: NavbarProps) {
 
   const { user, isLoading, isSudo } = useAuthentication();
   const { swapMode } = usePaletteMode();
+  const theme = useTheme();
   const navigate = useNavigate();
+  console.log(theme);
 
   const actualLinks = isSudo ? [...links, ...sudoLinks] : links;
 

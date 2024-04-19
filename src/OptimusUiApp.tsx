@@ -11,13 +11,13 @@ const queryClient = new QueryClient();
 
 type YesMuiConfiguration = {
   configure: true;
-  makeTheme: (paletteMode: PaletteMode) => ThemeOptions;
+  makeTheme?: (paletteMode: PaletteMode) => ThemeOptions;
   paletteMode?: undefined;
 };
 type NoMuiConfiguration = {
   configure: false;
   makeTheme?: undefined;
-  paletteMode: PaletteMode;
+  paletteMode?: undefined;
 };
 type MuiConfiguration = YesMuiConfiguration | NoMuiConfiguration;
 
@@ -45,7 +45,6 @@ type PageTitleConfiguration = YesPageTitleConfiguration | NoPageTitleConfigurati
 
 export type OptimusUiAppConfig<UserSchema> = PageTitleConfiguration &
   UserConfiguration<UserSchema> & {
-    configureMui?: boolean;
     configureReactQuery?: boolean;
     navbarLinks?: PageLink[];
     sudoNavbarLinks?: PageLink[];
@@ -54,7 +53,7 @@ export type OptimusUiAppConfig<UserSchema> = PageTitleConfiguration &
   };
 export default function OptimusUiApp<UserSchema>({
   children,
-  muiConfiguration = { configure: false, paletteMode: 'light' },
+  muiConfiguration = { configure: false },
   configureReactQuery = false,
   navbarLinks = [],
   sudoNavbarLinks = [],
@@ -97,18 +96,19 @@ export default function OptimusUiApp<UserSchema>({
       {children}
     </AuthenticationProvider>
   );
-  let content = children;
+
+  let content = (
+    <PaletteModeProvider setMode={setPaletteMode}>
+      <LayoutProvider layout={layout} links={navbarLinks} sudoLinks={sudoNavbarLinks}>
+        {children}
+      </LayoutProvider>
+    </PaletteModeProvider>
+  );
   // since these are rendered right away are to be checked starting from the innermost to the outermost, NOT viceversa
   if (configureUsers) content = withUsers(content);
   if (configurePageTitles) content = withPageTitles(content);
   if (configureReactQuery) content = withReactQuery(content);
   if (configureMui) content = withMui(content);
 
-  return (
-    <PaletteModeProvider mode={paletteInUse} setMode={setPaletteMode}>
-      <LayoutProvider layout={layout} links={navbarLinks} sudoLinks={sudoNavbarLinks}>
-        {content}
-      </LayoutProvider>
-    </PaletteModeProvider>
-  );
+  return <div>{content}</div>;
 }

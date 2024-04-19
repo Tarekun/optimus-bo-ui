@@ -1,5 +1,4 @@
 import { Box } from '@mui/material';
-import { orange } from '@mui/material/colors';
 import { PropsWithChildren, useEffect } from 'react';
 import Navbar, { NavbarProps } from '../components/Navbar';
 import { usePaletteMode } from '../contexts/PaletteModeContext';
@@ -9,13 +8,13 @@ export default function DefaultLayout({ children, links, sudoLinks }: DefaultLay
   const { mode } = usePaletteMode();
 
   useEffect(() => {
-    document.getElementsByTagName('body')[0].style.backgroundColor = mode === 'light' ? orange[100] : '#240901';
+    // document.getElementsByTagName('body')[0].style.backgroundColor = mode === 'light' ? orange[100] : '#240901';
   }, [mode]);
 
   return (
     <div
       style={{
-        backgroundColor: mode === 'light' ? orange[100] : '#240901',
+        // backgroundColor: mode === 'light' ? orange[100] : '#240901',
         minHeight: '100vh',
       }}
     >
