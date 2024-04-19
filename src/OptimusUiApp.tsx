@@ -15,9 +15,9 @@ type YesUserConfiguration<UserSchema> = {
   isSudo?: (user: UserSchema) => boolean;
 };
 type NoUserConfiguration = {
-  configureUsers: false;
-  fetchCurrentUser: undefined;
-  isSudo: undefined;
+  configureUsers?: false;
+  fetchCurrentUser?: undefined;
+  isSudo?: undefined;
 };
 type UserConfiguration<UserSchema> = YesUserConfiguration<UserSchema> | NoUserConfiguration;
 
@@ -26,8 +26,8 @@ type YesPageTitleConfiguration = {
   pageTitleForPath: (pathname: string) => string;
 };
 type NoPageTitleConfiguration = {
-  configurePageTitles: false;
-  pageTitleForPath: undefined;
+  configurePageTitles?: false;
+  pageTitleForPath?: undefined;
 };
 type PageTitleConfiguration = YesPageTitleConfiguration | NoPageTitleConfiguration;
 
