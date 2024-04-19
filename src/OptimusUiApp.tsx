@@ -9,17 +9,17 @@ import LayoutProvider, { SupportedLayouts } from './layouts/LayoutProvider';
 
 const queryClient = new QueryClient();
 
-type YesUserConfiguration<T> = {
+type YesUserConfiguration<UserSchema> = {
   configureUsers: true;
-  fetchCurrentUser: () => Promise<T>;
-  isSudo?: (user: T) => boolean;
+  fetchCurrentUser: () => Promise<UserSchema>;
+  isSudo?: (user: UserSchema) => boolean;
 };
 type NoUserConfiguration = {
   configureUsers: false;
   fetchCurrentUser: undefined;
   isSudo: undefined;
 };
-type UserConfiguration<T> = YesUserConfiguration<T> | NoUserConfiguration;
+type UserConfiguration<UserSchema> = YesUserConfiguration<UserSchema> | NoUserConfiguration;
 
 type YesPageTitleConfiguration = {
   configurePageTitles: true;
