@@ -21,7 +21,6 @@ export default function PaletteModeProvider({ children, setMode }: PaletteModePr
   const {
     palette: { mode },
   } = useTheme();
-  console.log(`mode from PaletteContext: ${mode}`);
 
   useEffect(() => {
     const storedMode = localStorage.getItem(paletteModeName);
