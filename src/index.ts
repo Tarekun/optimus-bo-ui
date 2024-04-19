@@ -14,6 +14,7 @@ import PaletteModeContext from './contexts/PaletteModeContext';
 import { useDebounce, useDeviceFeatures } from './hooks';
 import DefaultLayout from './layouts/DefaultLayout';
 import LayoutProvider from './layouts/LayoutProvider';
+import OptimusUiApp from './OptimusUiApp';
 
 export {
   AuthenticationContext,
@@ -25,6 +26,7 @@ export {
   ImageGallery,
   LayoutProvider,
   Navbar,
+  OptimusUiApp,
   PageContainer,
   PageNameProvider,
   PaletteModeContext,
