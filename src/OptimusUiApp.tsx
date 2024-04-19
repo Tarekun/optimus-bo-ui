@@ -9,6 +9,18 @@ import LayoutProvider, { SupportedLayouts } from './layouts/LayoutProvider';
 
 const queryClient = new QueryClient();
 
+type YesMuiConfiguration = {
+  configure: true;
+  makeTheme: (paletteMode: PaletteMode) => ThemeOptions;
+  paletteMode?: undefined;
+};
+type NoMuiConfiguration = {
+  configure: false;
+  makeTheme?: undefined;
+  paletteMode: PaletteMode;
+};
+type MuiConfiguration = YesMuiConfiguration | NoMuiConfiguration;
+
 type YesUserConfiguration<UserSchema> = {
   configureUsers: true;
   fetchCurrentUser: () => Promise<UserSchema>;
@@ -35,16 +47,15 @@ export type OptimusUiAppConfig<UserSchema> = PageTitleConfiguration &
   UserConfiguration<UserSchema> & {
     configureMui?: boolean;
     configureReactQuery?: boolean;
-    themeOverrides?: ThemeOptions;
     navbarLinks?: PageLink[];
     sudoNavbarLinks?: PageLink[];
     layout?: SupportedLayouts;
+    muiConfiguration?: MuiConfiguration;
   };
 export default function OptimusUiApp<UserSchema>({
   children,
-  configureMui = false,
+  muiConfiguration = { configure: false, paletteMode: 'light' },
   configureReactQuery = false,
-  themeOverrides,
   navbarLinks = [],
   sudoNavbarLinks = [],
   configurePageTitles = false,
@@ -56,10 +67,15 @@ export default function OptimusUiApp<UserSchema>({
   isSudo = () => false,
   layout = 'default',
 }: PropsWithChildren & OptimusUiAppConfig<UserSchema>) {
+  const { configure: configureMui, makeTheme = () => ({}), paletteMode: userPalette } = muiConfiguration;
+
   const [paletteMode, setPaletteMode] = useState<PaletteMode>('light');
+  const paletteInUse = userPalette || paletteMode;
+  const themeOverrides: ThemeOptions = makeTheme(paletteInUse);
   const theme = createTheme({
     palette: {
-      mode: paletteMode,
+      mode: paletteInUse,
+      ...themeOverrides?.palette,
     },
     ...themeOverrides,
   });
@@ -89,7 +105,7 @@ export default function OptimusUiApp<UserSchema>({
   if (configureMui) content = withMui(content);
 
   return (
-    <PaletteModeProvider mode={paletteMode} setMode={setPaletteMode}>
+    <PaletteModeProvider mode={paletteInUse} setMode={setPaletteMode}>
       <LayoutProvider layout={layout} links={navbarLinks} sudoLinks={sudoNavbarLinks}>
         {content}
       </LayoutProvider>
