@@ -154,14 +154,14 @@ function PageLinkDrawer({ links, onCloseDrawer }: PageLinkBuilderProps & { onClo
 export type NavbarStyling = 'solid' | 'transparent';
 
 export interface NavbarProps {
-  links: PageLink[];
+  links?: PageLink[];
   sudoLinks?: PageLink[];
   navbarStyling?: NavbarStyling;
   navbarPosition?: 'fixed' | 'static' | 'absolute' | 'sticky' | 'relative' | undefined;
   navbarColorCode?: string;
 }
 export default function Navbar({
-  links,
+  links = [],
   sudoLinks = [],
   navbarStyling = 'transparent',
   navbarPosition = 'fixed',
