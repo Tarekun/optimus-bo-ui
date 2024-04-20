@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PropsWithChildren, ReactNode, useState } from 'react';
 import { PageLink } from './components/Navbar';
 import AuthenticationProvider from './contexts/AuthenticationContext';
+import LanguagePackProvider, { LanguagePackProviderProps, LocaleType } from './contexts/LanguagePackContext';
 import PageNameProvider from './contexts/PageNameProvider';
 import PaletteModeProvider from './contexts/PaletteModeContext';
 import LayoutProvider, { LayoutConfig, SupportedLayouts } from './layouts/LayoutProvider';
@@ -52,7 +53,19 @@ type NoLayoutConfiguration = {
 };
 type LayoutConfiguration = YesLayoutConfiguration | NoLayoutConfiguration;
 
-export type OptimusUiAppConfig<UserSchema> = PageTitleConfiguration &
+type YesLanguagePackConfiguration<LanguagePackSchema> = {
+  configure: true;
+  packs: Record<LocaleType, LanguagePackSchema>;
+  defaultLocale: LocaleType;
+};
+type NoLanguagePackConfiguration = {
+  configure: false;
+};
+type LanguagePackConfiguration<LanguagePackSchema> =
+  | YesLanguagePackConfiguration<LanguagePackSchema>
+  | NoLanguagePackConfiguration;
+
+export type OptimusUiAppConfig<UserSchema, LanguagePackSchema> = PageTitleConfiguration &
   UserConfiguration<UserSchema> & {
     configureReactQuery?: boolean;
     navbarLinks?: PageLink[];
@@ -60,13 +73,14 @@ export type OptimusUiAppConfig<UserSchema> = PageTitleConfiguration &
     layout?: SupportedLayouts;
     muiConfiguration?: MuiConfiguration;
     layoutConfiguration?: LayoutConfiguration;
+    languagePackConfiguration?: LanguagePackConfiguration<LanguagePackSchema>;
   };
-export default function OptimusUiApp<UserSchema>({
+export default function OptimusUiApp<UserSchema, LanguagePackSchema>({
   children,
   muiConfiguration = { configure: false },
+  layoutConfiguration = { configure: false },
+  languagePackConfiguration = { configure: false },
   configureReactQuery = false,
-  navbarLinks = [],
-  sudoNavbarLinks = [],
   configurePageTitles = false,
   pageTitleForPath = () => '',
   configureUsers = false,
@@ -74,11 +88,10 @@ export default function OptimusUiApp<UserSchema>({
     throw 'User functionality not configured: fetchCurrentUser prop not set on OptimusUiApp';
   },
   isSudo = () => false,
-  layout = 'default',
-  layoutConfiguration = { configure: false },
-}: PropsWithChildren & OptimusUiAppConfig<UserSchema>) {
+}: PropsWithChildren & OptimusUiAppConfig<UserSchema, LanguagePackSchema>) {
   const { configure: configureMui, makeTheme = () => ({}), paletteMode: userPalette } = muiConfiguration;
   const { configure: configureLayout } = layoutConfiguration;
+  const { configure: configureLanguagePack, ...langConfig } = languagePackConfiguration;
 
   const [paletteMode, setPaletteMode] = useState<PaletteMode>('light');
   const paletteInUse = userPalette || paletteMode;
@@ -108,6 +121,11 @@ export default function OptimusUiApp<UserSchema>({
       {children}
     </AuthenticationProvider>
   );
+  const withLanguagePack = (children: ReactNode) => (
+    <LanguagePackProvider {...(langConfig as LanguagePackProviderProps<LanguagePackSchema>)}>
+      {children}
+    </LanguagePackProvider>
+  );
 
   let content = (
     <PaletteModeProvider setMode={setPaletteMode}>
@@ -119,6 +137,7 @@ export default function OptimusUiApp<UserSchema>({
     </PaletteModeProvider>
   );
   // since these are rendered right away are to be checked starting from the innermost to the outermost, NOT viceversa
+  if (configureLanguagePack) content = withLanguagePack(content);
   if (configureUsers) content = withUsers(content);
   if (configurePageTitles) content = withPageTitles(content);
   if (configureReactQuery) content = withReactQuery(content);
