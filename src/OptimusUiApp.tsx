@@ -5,7 +5,7 @@ import { PageLink } from './components/Navbar';
 import AuthenticationProvider from './contexts/AuthenticationContext';
 import PageNameProvider from './contexts/PageNameProvider';
 import PaletteModeProvider from './contexts/PaletteModeContext';
-import LayoutProvider, { SupportedLayouts } from './layouts/LayoutProvider';
+import LayoutProvider, { LayoutConfig, SupportedLayouts } from './layouts/LayoutProvider';
 
 const queryClient = new QueryClient();
 
@@ -43,6 +43,15 @@ type NoPageTitleConfiguration = {
 };
 type PageTitleConfiguration = YesPageTitleConfiguration | NoPageTitleConfiguration;
 
+type YesLayoutConfiguration = {
+  configure: true;
+  layoutConfig: LayoutConfig;
+};
+type NoLayoutConfiguration = {
+  configure: false;
+};
+type LayoutConfiguration = YesLayoutConfiguration | NoLayoutConfiguration;
+
 export type OptimusUiAppConfig<UserSchema> = PageTitleConfiguration &
   UserConfiguration<UserSchema> & {
     configureReactQuery?: boolean;
@@ -50,6 +59,7 @@ export type OptimusUiAppConfig<UserSchema> = PageTitleConfiguration &
     sudoNavbarLinks?: PageLink[];
     layout?: SupportedLayouts;
     muiConfiguration?: MuiConfiguration;
+    layoutConfiguration?: LayoutConfiguration;
   };
 export default function OptimusUiApp<UserSchema>({
   children,
@@ -65,8 +75,10 @@ export default function OptimusUiApp<UserSchema>({
   },
   isSudo = () => false,
   layout = 'default',
+  layoutConfiguration = { configure: false },
 }: PropsWithChildren & OptimusUiAppConfig<UserSchema>) {
   const { configure: configureMui, makeTheme = () => ({}), paletteMode: userPalette } = muiConfiguration;
+  const { configure: configureLayout } = layoutConfiguration;
 
   const [paletteMode, setPaletteMode] = useState<PaletteMode>('light');
   const paletteInUse = userPalette || paletteMode;
@@ -99,9 +111,11 @@ export default function OptimusUiApp<UserSchema>({
 
   let content = (
     <PaletteModeProvider setMode={setPaletteMode}>
-      <LayoutProvider layout={layout} links={navbarLinks} sudoLinks={sudoNavbarLinks}>
-        {children}
-      </LayoutProvider>
+      {configureLayout ? (
+        <LayoutProvider {...layoutConfiguration.layoutConfig}>{children}</LayoutProvider>
+      ) : (
+        <LayoutProvider layoutType="no-layout">{children}</LayoutProvider>
+      )}
     </PaletteModeProvider>
   );
   // since these are rendered right away are to be checked starting from the innermost to the outermost, NOT viceversa
