@@ -15,8 +15,9 @@ import {
   Toolbar,
   Tooltip,
   Typography,
+  useTheme,
 } from '@mui/material';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthentication } from '../contexts/AuthenticationContext';
 import { usePaletteMode } from '../contexts/PaletteModeContext';
@@ -150,81 +151,119 @@ function PageLinkDrawer({ links, onCloseDrawer }: PageLinkBuilderProps & { onClo
 //   );
 // }
 
+export type NavbarStyling = 'solid' | 'transparent';
+
 export interface NavbarProps {
   links: PageLink[];
   sudoLinks?: PageLink[];
+  navbarStyling?: NavbarStyling;
+  navbarPosition?: 'fixed' | 'static' | 'absolute' | 'sticky' | 'relative' | undefined;
+  navbarColorCode?: string;
 }
-export default function Navbar({ links, sudoLinks = [] }: NavbarProps) {
+export default function Navbar({
+  links,
+  sudoLinks = [],
+  navbarStyling = 'transparent',
+  navbarPosition = 'fixed',
+  navbarColorCode,
+}: NavbarProps) {
   const [openDrawer, setOpenDrawer] = useState(false);
-  const { isMobile } = useDeviceFeatures();
+  const [navbarHeight, setNavbarHeight] = useState(0);
 
+  const { isMobile } = useDeviceFeatures();
   const { user, isLoading, isSudo } = useAuthentication();
   const { swapMode } = usePaletteMode();
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const actualLinks = isSudo ? [...links, ...sudoLinks] : links;
+  const baseColor = navbarColorCode || theme.palette.primary.main;
+
+  const appBarRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (appBarRef.current?.clientHeight) {
+      setNavbarHeight(appBarRef.current?.clientHeight);
+    }
+  }, [appBarRef.current?.clientHeight]);
 
   return (
-    <AppBar position="static" color="primary" enableColorOnDark>
-      <Toolbar>
-        {isMobile && (
-          <>
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="apri menu a laterale"
-              sx={{ mr: 2 }}
-              onClick={() => setOpenDrawer(true)}
-            >
-              <MenuIcon />
-            </IconButton>
+    // this forces the navbar to take vertical space even with position="fixed"
+    // and not have component be hid underneath it
+    <Box sx={{ height: navbarHeight }}>
+      <AppBar
+        ref={appBarRef}
+        position={navbarPosition}
+        color="primary"
+        enableColorOnDark
+        sx={{
+          backgroundColor:
+            // 6D is more or less 40% transparency
+            navbarStyling === 'transparent' ? `${baseColor}6D` : baseColor,
+          backdropFilter: 'blur(10px)',
+        }}
+      >
+        <Toolbar>
+          {isMobile && (
+            <>
+              <IconButton
+                size="large"
+                edge="start"
+                color="inherit"
+                aria-label="apri menu a laterale"
+                sx={{ mr: 2 }}
+                onClick={() => setOpenDrawer(true)}
+              >
+                <MenuIcon />
+              </IconButton>
 
-            <Drawer
-              anchor="left"
-              open={openDrawer}
-              onClose={() => setOpenDrawer(false)}
-              ModalProps={{
-                //migliora le performance nell'apertura del drawer, avviene solo su mobile
-                keepMounted: true,
-              }}
-              sx={{
-                '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH },
-              }}
-            >
-              <Box
+              <Drawer
+                anchor="left"
+                open={openDrawer}
+                onClose={() => setOpenDrawer(false)}
+                ModalProps={{
+                  //migliora le performance nell'apertura del drawer, avviene solo su mobile
+                  keepMounted: true,
+                }}
                 sx={{
-                  padding: 2,
+                  '& .MuiDrawer-paper': {
+                    boxSizing: 'border-box',
+                    width: DRAWER_WIDTH,
+                  },
                 }}
               >
-                <Stack direction="row">
-                  <Typography
-                    sx={{ flexGrow: 1 }}
-                    align="center"
-                    display="flex"
-                    alignContent="center"
-                    alignItems="center"
-                  >
-                    Menu
-                  </Typography>
-                  <IconButton color="inherit" onClick={() => setOpenDrawer(false)}>
-                    <CloseIcon />
-                  </IconButton>
-                </Stack>
-                <Divider />
+                <Box
+                  sx={{
+                    padding: 2,
+                  }}
+                >
+                  <Stack direction="row">
+                    <Typography
+                      sx={{ flexGrow: 1 }}
+                      align="center"
+                      display="flex"
+                      alignContent="center"
+                      alignItems="center"
+                    >
+                      Menu
+                    </Typography>
+                    <IconButton color="inherit" onClick={() => setOpenDrawer(false)}>
+                      <CloseIcon />
+                    </IconButton>
+                  </Stack>
+                  <Divider />
 
-                <PageLinkDrawer links={actualLinks} onCloseDrawer={() => setOpenDrawer(false)} />
-              </Box>
-            </Drawer>
-          </>
-        )}
+                  <PageLinkDrawer links={actualLinks} onCloseDrawer={() => setOpenDrawer(false)} />
+                </Box>
+              </Drawer>
+            </>
+          )}
 
-        {!isMobile && <PageLinkNavbar links={actualLinks} />}
+          {!isMobile && <PageLinkNavbar links={actualLinks} />}
 
-        {/*box che occupa tutto lo spazio possibile per forzare i bottoni seguenti ad essere sulla destra */}
-        <Box flexGrow={1} />
+          {/*box che occupa tutto lo spazio possibile per forzare i bottoni seguenti ad essere sulla destra */}
+          <Box flexGrow={1} />
 
-        {/* {isLoading ? (
+          {/* {isLoading ? (
           <CircularProgress color="inherit" size={30} />
         ) : user === null ? (
           <Stack direction="row" spacing={2}>
@@ -254,12 +293,13 @@ export default function Navbar({ links, sudoLinks = [] }: NavbarProps) {
         ) : (
           <ProfileMenu user={user} />
         )} */}
-        <Tooltip title="Abilita/disabilita la modalità scura">
-          <IconButton color="inherit" aria-label="Dark mode" onClick={swapMode}>
-            <ContrastIcon />
-          </IconButton>
-        </Tooltip>
-      </Toolbar>
-    </AppBar>
+          <Tooltip title="Abilita/disabilita la modalità scura">
+            <IconButton color="inherit" aria-label="Dark mode" onClick={swapMode}>
+              <ContrastIcon />
+            </IconButton>
+          </Tooltip>
+        </Toolbar>
+      </AppBar>
+    </Box>
   );
 }
