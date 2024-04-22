@@ -35,11 +35,11 @@ type NoUserConfiguration = {
 type UserConfiguration<UserSchema> = YesUserConfiguration<UserSchema> | NoUserConfiguration;
 
 type YesPageTitleConfiguration = {
-  configurePageTitles: true;
+  configure: true;
   pageTitleForPath: (pathname: string) => string;
 };
 type NoPageTitleConfiguration = {
-  configurePageTitles?: false;
+  configure: false;
   pageTitleForPath?: undefined;
 };
 type PageTitleConfiguration = YesPageTitleConfiguration | NoPageTitleConfiguration;
@@ -65,24 +65,23 @@ type LanguagePackConfiguration<LanguagePackSchema> =
   | YesLanguagePackConfiguration<LanguagePackSchema>
   | NoLanguagePackConfiguration;
 
-export type OptimusUiAppConfig<UserSchema, LanguagePackSchema> = PageTitleConfiguration &
-  UserConfiguration<UserSchema> & {
-    configureReactQuery?: boolean;
-    navbarLinks?: PageLink[];
-    sudoNavbarLinks?: PageLink[];
-    layout?: SupportedLayouts;
-    muiConfiguration?: MuiConfiguration;
-    layoutConfiguration?: LayoutConfiguration;
-    languagePackConfiguration?: LanguagePackConfiguration<LanguagePackSchema>;
-  };
+export type OptimusUiAppConfig<UserSchema, LanguagePackSchema> = UserConfiguration<UserSchema> & {
+  configureReactQuery?: boolean;
+  navbarLinks?: PageLink[];
+  sudoNavbarLinks?: PageLink[];
+  layout?: SupportedLayouts;
+  muiConfiguration?: MuiConfiguration;
+  layoutConfiguration?: LayoutConfiguration;
+  languagePackConfiguration?: LanguagePackConfiguration<LanguagePackSchema>;
+  pageTitleConfiguration?: PageTitleConfiguration;
+};
 export default function OptimusUiApp<UserSchema, LanguagePackSchema>({
   children,
   muiConfiguration = { configure: false },
   layoutConfiguration = { configure: false },
   languagePackConfiguration = { configure: false },
+  pageTitleConfiguration = { configure: false },
   configureReactQuery = false,
-  configurePageTitles = false,
-  pageTitleForPath = () => '',
   configureUsers = false,
   fetchCurrentUser = () => {
     throw 'User functionality not configured: fetchCurrentUser prop not set on OptimusUiApp';
@@ -92,6 +91,7 @@ export default function OptimusUiApp<UserSchema, LanguagePackSchema>({
   const { configure: configureMui, makeTheme = () => ({}), paletteMode: userPalette } = muiConfiguration;
   const { configure: configureLayout } = layoutConfiguration;
   const { configure: configureLanguagePack, ...langConfig } = languagePackConfiguration;
+  const { configure: configurePageTitles, pageTitleForPath = () => '' } = pageTitleConfiguration;
 
   const [paletteMode, setPaletteMode] = useState<PaletteMode>('light');
   const paletteInUse = userPalette || paletteMode;
