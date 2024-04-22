@@ -23,12 +23,12 @@ type NoMuiConfiguration = {
 type MuiConfiguration = YesMuiConfiguration | NoMuiConfiguration;
 
 type YesUserConfiguration<UserSchema> = {
-  configureUsers: true;
+  configure: true;
   fetchCurrentUser: () => Promise<UserSchema>;
   isSudo?: (user: UserSchema) => boolean;
 };
 type NoUserConfiguration = {
-  configureUsers?: false;
+  configure: false;
   fetchCurrentUser?: undefined;
   isSudo?: undefined;
 };
@@ -65,7 +65,7 @@ type LanguagePackConfiguration<LanguagePackSchema> =
   | YesLanguagePackConfiguration<LanguagePackSchema>
   | NoLanguagePackConfiguration;
 
-export type OptimusUiAppConfig<UserSchema, LanguagePackSchema> = UserConfiguration<UserSchema> & {
+export type OptimusUiAppConfig<UserSchema, LanguagePackSchema> = {
   configureReactQuery?: boolean;
   navbarLinks?: PageLink[];
   sudoNavbarLinks?: PageLink[];
@@ -74,6 +74,7 @@ export type OptimusUiAppConfig<UserSchema, LanguagePackSchema> = UserConfigurati
   layoutConfiguration?: LayoutConfiguration;
   languagePackConfiguration?: LanguagePackConfiguration<LanguagePackSchema>;
   pageTitleConfiguration?: PageTitleConfiguration;
+  userConfiguration?: UserConfiguration<UserSchema>;
 };
 export default function OptimusUiApp<UserSchema, LanguagePackSchema>({
   children,
@@ -81,17 +82,20 @@ export default function OptimusUiApp<UserSchema, LanguagePackSchema>({
   layoutConfiguration = { configure: false },
   languagePackConfiguration = { configure: false },
   pageTitleConfiguration = { configure: false },
+  userConfiguration = { configure: false },
   configureReactQuery = false,
-  configureUsers = false,
-  fetchCurrentUser = () => {
-    throw 'User functionality not configured: fetchCurrentUser prop not set on OptimusUiApp';
-  },
-  isSudo = () => false,
 }: PropsWithChildren & OptimusUiAppConfig<UserSchema, LanguagePackSchema>) {
   const { configure: configureMui, makeTheme = () => ({}), paletteMode: userPalette } = muiConfiguration;
   const { configure: configureLayout } = layoutConfiguration;
   const { configure: configureLanguagePack, ...langConfig } = languagePackConfiguration;
   const { configure: configurePageTitles, pageTitleForPath = () => '' } = pageTitleConfiguration;
+  const {
+    configure: configureUsers,
+    isSudo = () => false,
+    fetchCurrentUser = () => {
+      throw 'User functionality not configured: fetchCurrentUser prop not set on OptimusUiApp';
+    },
+  } = userConfiguration;
 
   const [paletteMode, setPaletteMode] = useState<PaletteMode>('light');
   const paletteInUse = userPalette || paletteMode;
@@ -143,5 +147,5 @@ export default function OptimusUiApp<UserSchema, LanguagePackSchema>({
   if (configureReactQuery) content = withReactQuery(content);
   if (configureMui) content = withMui(content);
 
-  return <div>{content}</div>;
+  return <div id="optimus-ui-application">{content}</div>;
 }
