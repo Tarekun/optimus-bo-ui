@@ -23,7 +23,7 @@ export default function DefaultLayout({ children, navbarConfig = {} }: DefaultLa
         minHeight: '100vh',
       }}
     >
-      <Navbar links={links} sudoLinks={sudoLinks} />
+      <Navbar links={links} sudoLinks={sudoLinks} {...navbarConfig} />
       <Box
         sx={{
           padding: 2,
