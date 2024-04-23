@@ -95,7 +95,7 @@ export interface NavbarProps {
   navbarStyling?: NavbarStyling;
   navbarPosition?: 'fixed' | 'static' | 'absolute' | 'sticky' | 'relative' | undefined;
   navbarColorCode?: string;
-  trailingButtons?: ReactNode[];
+  trailingButtons?: ReactNode;
 }
 export default function Navbar({
   links = [],
@@ -103,7 +103,7 @@ export default function Navbar({
   navbarStyling = 'transparent',
   navbarPosition = 'fixed',
   navbarColorCode,
-  trailingButtons = [],
+  trailingButtons = null,
 }: NavbarProps) {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [navbarHeight, setNavbarHeight] = useState(0);
@@ -139,7 +139,7 @@ export default function Navbar({
         }}
       >
         <Toolbar>
-          {isMobile && (
+          {isMobile ? (
             <>
               <IconButton
                 size="large"
@@ -185,9 +185,9 @@ export default function Navbar({
                 <PageLinkDrawer links={actualLinks} onCloseDrawer={() => setOpenDrawer(false)} />
               </Drawer>
             </>
+          ) : (
+            <PageLinkNavbar links={actualLinks} />
           )}
-
-          {!isMobile && <PageLinkNavbar links={actualLinks} />}
 
           {/*box che occupa tutto lo spazio possibile per forzare i bottoni seguenti ad essere sulla destra */}
           <Box flexGrow={1} />
