@@ -121,7 +121,6 @@ export default function Navbar({
       setNavbarHeight(appBarRef.current?.clientHeight);
     }
   }, [appBarRef.current?.clientHeight]);
-  console.log(trailingButtons);
 
   return (
     // this forces the navbar to take vertical space even with position="fixed"
