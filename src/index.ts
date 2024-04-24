@@ -1,7 +1,9 @@
+import OptimusUiApp from './OptimusUiApp';
 import BetterSwitch from './components/BetterSwitch';
 import CommonAccordion from './components/CommonAccordion';
 import ConfirmationDialog from './components/ConfirmationDialog';
 import EditableTypography from './components/EditableTypography';
+import FancyImg from './components/FancyImg';
 import ImageGallery from './components/ImageGallery';
 import Navbar from './components/Navbar';
 import PageContainer from './components/PageContainer';
@@ -14,7 +16,6 @@ import PaletteModeContext from './contexts/PaletteModeContext';
 import { useDebounce, useDeviceFeatures } from './hooks';
 import DefaultLayout from './layouts/DefaultLayout';
 import LayoutProvider from './layouts/LayoutProvider';
-import OptimusUiApp from './OptimusUiApp';
 
 export {
   AuthenticationContext,
@@ -23,6 +24,7 @@ export {
   ConfirmationDialog,
   DefaultLayout,
   EditableTypography,
+  FancyImg,
   ImageGallery,
   LayoutProvider,
   Navbar,
