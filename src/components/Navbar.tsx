@@ -1,5 +1,4 @@
 import CloseIcon from '@mui/icons-material/Close';
-import ContrastIcon from '@mui/icons-material/Contrast';
 import MenuIcon from '@mui/icons-material/Menu';
 import {
   AppBar,
@@ -13,14 +12,12 @@ import {
   ListItemIcon,
   Stack,
   Toolbar,
-  Tooltip,
   Typography,
   useTheme,
 } from '@mui/material';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthentication } from '../contexts/AuthenticationContext';
-import { usePaletteMode } from '../contexts/PaletteModeContext';
 import { useDeviceFeatures } from '../hooks';
 
 export interface PageLink {
@@ -90,67 +87,6 @@ function PageLinkDrawer({ links, onCloseDrawer }: PageLinkBuilderProps & { onClo
   );
 }
 
-// interface ProfileMenuProps {
-//   user: UserRead;
-// }
-// function ProfileMenu({ user }: ProfileMenuProps) {
-//   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-//   const open = Boolean(anchorEl);
-//   const navigate = useNavigate();
-
-//   function logout() {
-//     eseguiLogout();
-//     navigate(0);
-//   }
-
-//   return (
-//     <>
-//       <IconButton
-//         size="large"
-//         color="inherit"
-//         aria-label="Profilo"
-//         onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-//           setAnchorEl(event.currentTarget);
-//         }}
-//       >
-//         <AccountCircleIcon />
-//       </IconButton>
-//       <Menu
-//         anchorEl={anchorEl}
-//         open={open}
-//         onClose={() => {
-//           setAnchorEl(null);
-//         }}
-//       >
-//         <Typography variant="h6" marginLeft={3} marginRight={3}>
-//           Ciao {user.nome}
-//         </Typography>
-//         <MenuItem
-//           onClick={() => {
-//             navigate(ROUTES.profilo);
-//             setAnchorEl(null);
-//           }}
-//         >
-//           <ListItemIcon>
-//             <AccountCircleIcon fontSize="small" />
-//           </ListItemIcon>
-//           <ListItemText>Profilo</ListItemText>
-//         </MenuItem>
-//         <MenuItem
-//           onClick={() => {
-//             logout();
-//           }}
-//         >
-//           <ListItemIcon>
-//             <LogoutIcon fontSize="small" />
-//           </ListItemIcon>
-//           <ListItemText>Log out</ListItemText>
-//         </MenuItem>
-//       </Menu>
-//     </>
-//   );
-// }
-
 export type NavbarStyling = 'solid' | 'transparent';
 
 export interface NavbarProps {
@@ -159,6 +95,7 @@ export interface NavbarProps {
   navbarStyling?: NavbarStyling;
   navbarPosition?: 'fixed' | 'static' | 'absolute' | 'sticky' | 'relative' | undefined;
   navbarColorCode?: string;
+  trailingButtons?: ReactNode;
 }
 export default function Navbar({
   links = [],
@@ -166,14 +103,13 @@ export default function Navbar({
   navbarStyling = 'transparent',
   navbarPosition = 'fixed',
   navbarColorCode,
+  trailingButtons = null,
 }: NavbarProps) {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [navbarHeight, setNavbarHeight] = useState(0);
 
   const { isMobile } = useDeviceFeatures();
-  const { user, isLoading, isSudo } = useAuthentication();
-  const { swapMode } = usePaletteMode();
-  const navigate = useNavigate();
+  const { isSudo } = useAuthentication();
   const theme = useTheme();
 
   const actualLinks = isSudo ? [...links, ...sudoLinks] : links;
@@ -203,13 +139,13 @@ export default function Navbar({
         }}
       >
         <Toolbar>
-          {isMobile && (
+          {isMobile ? (
             <>
               <IconButton
                 size="large"
                 edge="start"
                 color="inherit"
-                aria-label="apri menu a laterale"
+                aria-label="Open side menu"
                 sx={{ mr: 2 }}
                 onClick={() => setOpenDrawer(true)}
               >
@@ -221,7 +157,6 @@ export default function Navbar({
                 open={openDrawer}
                 onClose={() => setOpenDrawer(false)}
                 ModalProps={{
-                  //migliora le performance nell'apertura del drawer, avviene solo su mobile
                   keepMounted: true,
                 }}
                 sx={{
@@ -231,73 +166,32 @@ export default function Navbar({
                   },
                 }}
               >
-                <Box
-                  sx={{
-                    padding: 2,
-                  }}
-                >
-                  <Stack direction="row">
-                    <Typography
-                      sx={{ flexGrow: 1 }}
-                      align="center"
-                      display="flex"
-                      alignContent="center"
-                      alignItems="center"
-                    >
-                      Menu
-                    </Typography>
-                    <IconButton color="inherit" onClick={() => setOpenDrawer(false)}>
-                      <CloseIcon />
-                    </IconButton>
-                  </Stack>
-                  <Divider />
+                <Stack direction="row" sx={{ width: '100%', padding: 2 }}>
+                  <Typography
+                    sx={{ flexGrow: 1 }}
+                    align="center"
+                    display="flex"
+                    alignContent="center"
+                    alignItems="center"
+                  >
+                    Menu
+                  </Typography>
+                  <IconButton color="inherit" onClick={() => setOpenDrawer(false)}>
+                    <CloseIcon />
+                  </IconButton>
+                </Stack>
+                <Divider />
 
-                  <PageLinkDrawer links={actualLinks} onCloseDrawer={() => setOpenDrawer(false)} />
-                </Box>
+                <PageLinkDrawer links={actualLinks} onCloseDrawer={() => setOpenDrawer(false)} />
               </Drawer>
             </>
+          ) : (
+            <PageLinkNavbar links={actualLinks} />
           )}
-
-          {!isMobile && <PageLinkNavbar links={actualLinks} />}
 
           {/*box che occupa tutto lo spazio possibile per forzare i bottoni seguenti ad essere sulla destra */}
           <Box flexGrow={1} />
-
-          {/* {isLoading ? (
-          <CircularProgress color="inherit" size={30} />
-        ) : user === null ? (
-          <Stack direction="row" spacing={2}>
-            {!isMobile && (
-              <Button
-                //senza questo il bottone non si renderizza
-                color="inherit"
-                variant="text"
-                onClick={() => {
-                  navigate(ROUTES.iscrizione);
-                }}
-              >
-                Iscriviti
-              </Button>
-            )}
-            <Button
-              //senza questo il bottone non si renderizza
-              color="inherit"
-              variant="outlined"
-              onClick={() => {
-                navigate(ROUTES.login);
-              }}
-            >
-              Login
-            </Button>
-          </Stack>
-        ) : (
-          <ProfileMenu user={user} />
-        )} */}
-          <Tooltip title="Abilita/disabilita la modalità scura">
-            <IconButton color="inherit" aria-label="Dark mode" onClick={swapMode}>
-              <ContrastIcon />
-            </IconButton>
-          </Tooltip>
+          {trailingButtons}
         </Toolbar>
       </AppBar>
     </Box>
