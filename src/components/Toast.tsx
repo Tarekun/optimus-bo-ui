@@ -31,8 +31,8 @@ export function useToast(config: UseToastConfig) {
   const [severity, setSeverity] = useState(defaultSeverity);
   const [autoHideDuration, setAutoHideDuration] = useState(defaultAutoHideDuration);
 
-  function showToast(config: UseToastConfig) {
-    const { text, severity, autoHideDuration } = config;
+  function showToast(config?: UseToastConfig) {
+    const { text, severity, autoHideDuration } = config || {};
     if (text !== undefined) {
       setText(text);
     }
