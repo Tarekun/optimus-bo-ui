@@ -9,12 +9,18 @@ export interface FancyImgProps {
   alt?: string;
   showBackground?: boolean;
   backgroundColor?: string;
+  showBorder?: boolean;
+  borderColor?: string;
+  horizontalOffset?: 'left' | 'right';
 }
 export default function FancyImg({
   src,
   alt = '',
   showBackground = true,
   backgroundColor = 'primary.main',
+  showBorder = false,
+  borderColor = 'primary.main',
+  horizontalOffset = 'right',
 }: FancyImgProps) {
   const [offset, setOffset] = useState(0);
   const imageRef = useRef<HTMLDivElement>(null);
@@ -42,7 +48,12 @@ export default function FancyImg({
   return (
     <Box sx={{ padding: 5 }}>
       <Box sx={{ width: 'fit-content', position: 'relative', height: 'fit-content' }}>
-        <Paper elevation={24} sx={{ borderRadius: borderRadius }}>
+        <Paper
+          elevation={24}
+          sx={{
+            borderRadius: borderRadius,
+          }}
+        >
           <Box
             component="img"
             src={src}
@@ -54,8 +65,10 @@ export default function FancyImg({
               display: 'block',
               width: '100%',
               height: 'auto',
-              borderRadius: borderRadius,
               zIndex: 1,
+              borderRadius: borderRadius,
+              border: showBorder ? '2px solid' : undefined,
+              borderColor: borderColor,
             }}
           />
         </Paper>
@@ -66,7 +79,7 @@ export default function FancyImg({
             sx={{
               position: 'absolute',
               top: offset,
-              left: 16,
+              left: horizontalOffset === 'right' ? 16 : -16,
               backgroundColor: backgroundColor,
               width: '100%',
               height: '100%',
