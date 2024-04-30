@@ -22,6 +22,7 @@ export default function LayoutProvider(props: LayoutProviderProps) {
 
   switch (layoutType) {
     case 'default':
+      //eslint-disable-next-line no-case-declarations
       const { navbarConfig = {} } = props as DefaultLayoutConfig;
       return <DefaultLayout navbarConfig={navbarConfig}>{children}</DefaultLayout>;
 

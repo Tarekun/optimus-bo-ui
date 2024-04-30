@@ -9,6 +9,7 @@ export type useLanguagePackReturn<LanguagePackSchema> = {
   isConfigured: boolean;
 };
 
+//eslint-disable-next-line @typescript-eslint/no-explicit-any
 const LanguagePackContext = createContext<useLanguagePackReturn<any>>({
   languagePack: null,
   selectedLocale: '',
