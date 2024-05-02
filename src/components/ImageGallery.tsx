@@ -8,18 +8,23 @@ const fadeDurationS = 0.5;
 const buttonsWidth = 75;
 const missingImagesUrl =
   'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.istockphoto.com%2Fvectors%2Fno-image-available-sign-vector-id1138179183%3Fk%3D6%26m%3D1138179183%26s%3D612x612%26w%3D0%26h%3DprMYPP9mLRNpTp3XIykjeJJ8oCZRhb2iez6vKs8a8eE%3D&f=1&nofb=1&ipt=fa5858195f77a712c882ee2f91427ddfcc7f7e3da765205ed3120aba5e250977&ipo=images';
+const defaultBorderRadius = 1;
 
 interface ImageGalleryProps {
   imgSourcesList: string[];
   onIndexUpdate?: (newIndex: number) => void;
   imgBoxProps?: BoxProps;
+  borderRadius?: number;
 }
 
 export default function ImageGallery({
   imgSourcesList,
   onIndexUpdate = () => {},
   imgBoxProps = {},
+  borderRadius = defaultBorderRadius,
 }: ImageGalleryProps) {
+  const { sx: imgSxOverrides = {}, ...imgPropsRest } = imgBoxProps;
+
   const [imgIndex, setImgIndex] = useState(0);
   const [opacity, setOpacity] = useState(1);
 
@@ -40,10 +45,14 @@ export default function ImageGallery({
   useEffect(() => onIndexUpdate(imgIndex), [imgIndex]);
 
   return (
-    <Paper elevation={8} sx={{ position: 'relative', display: 'inline-block', overflow: 'hidden' }}>
+    <Paper
+      elevation={8}
+      sx={{ position: 'relative', display: 'inline-block', overflow: 'hidden', borderRadius: borderRadius }}
+    >
       <Box
         onClick={previousImage}
         sx={{
+          borderRadius: borderRadius,
           position: 'absolute',
           top: 0,
           bottom: 0,
@@ -65,7 +74,7 @@ export default function ImageGallery({
       <Box
         component="img"
         sx={{
-          borderRadius: 1,
+          borderRadius: borderRadius,
           display: 'block',
           maxWidth: '100%',
           maxHeight: '100vh',
@@ -73,14 +82,16 @@ export default function ImageGallery({
           width: 'auto',
           opacity: opacity,
           transition: `opacity ${fadeDurationS}s ease`,
+          ...imgSxOverrides,
         }}
         src={imgSourcesList[imgIndex] || missingImagesUrl}
-        {...imgBoxProps}
+        {...imgPropsRest}
       />
 
       <Box
         onClick={nextImage}
         sx={{
+          borderRadius: borderRadius,
           position: 'absolute',
           top: 0,
           bottom: 0,
