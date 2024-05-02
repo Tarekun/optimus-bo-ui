@@ -18,21 +18,18 @@ export default function ImageGallery({ imgSourcesList, onIndexUpdate = () => {} 
   const [imgIndex, setImgIndex] = useState(0);
   const [opacity, setOpacity] = useState(1);
 
-  function prossimaImmagine() {
-    const newIndex = (imgSourcesList.length + imgIndex - 1) % imgSourcesList.length;
+  function updateImage(newIndex: number) {
     setOpacity(0);
     setTimeout(() => {
       setImgIndex(newIndex);
       setOpacity(1);
     }, fadeDurationMs);
   }
-  function immaginePrecedente() {
-    const newIndex = (imgIndex + 1) % imgSourcesList.length;
-    setOpacity(0);
-    setTimeout(() => {
-      setImgIndex(newIndex);
-      setOpacity(1);
-    }, fadeDurationMs);
+  function nextImage() {
+    updateImage((imgIndex + 1) % imgSourcesList.length);
+  }
+  function previousImage() {
+    updateImage((imgSourcesList.length + imgIndex - 1) % imgSourcesList.length);
   }
 
   useEffect(() => onIndexUpdate(imgIndex), [imgIndex]);
@@ -40,7 +37,7 @@ export default function ImageGallery({ imgSourcesList, onIndexUpdate = () => {} 
   return (
     <Paper elevation={8} sx={{ position: 'relative', display: 'inline-block', overflow: 'hidden' }}>
       <Box
-        onClick={immaginePrecedente}
+        onClick={previousImage}
         sx={{
           position: 'absolute',
           top: 0,
@@ -64,11 +61,11 @@ export default function ImageGallery({ imgSourcesList, onIndexUpdate = () => {} 
         component="img"
         sx={{
           borderRadius: 1,
-          display: 'block', // Ensure the image is not inline to cover the whole Box area
-          maxWidth: '100%', // Ensure the image's width does not exceed the container's width
-          maxHeight: '100vh', // Optionally limit the height to the viewport's height
-          height: 'auto', // Maintain aspect ratio
-          width: 'auto', // Adjust based on the container's width
+          display: 'block',
+          maxWidth: '100%',
+          maxHeight: '100vh',
+          height: 'auto',
+          width: 'auto',
           opacity: opacity,
           transition: `opacity ${fadeDurationS}s ease`,
         }}
@@ -76,7 +73,7 @@ export default function ImageGallery({ imgSourcesList, onIndexUpdate = () => {} 
       />
 
       <Box
-        onClick={prossimaImmagine}
+        onClick={nextImage}
         sx={{
           position: 'absolute',
           top: 0,
