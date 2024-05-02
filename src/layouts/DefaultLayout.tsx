@@ -5,8 +5,9 @@ import { usePaletteMode } from '../contexts/PaletteModeContext';
 
 export type DefaultLayoutProps = PropsWithChildren & {
   navbarConfig?: NavbarProps;
+  contentPadding?: number;
 };
-export default function DefaultLayout({ children, navbarConfig = {} }: DefaultLayoutProps) {
+export default function DefaultLayout({ children, navbarConfig = {}, contentPadding = 0 }: DefaultLayoutProps) {
   const { links = [], sudoLinks = [] } = navbarConfig;
   const { mode } = usePaletteMode();
   const theme = useTheme();
@@ -26,7 +27,7 @@ export default function DefaultLayout({ children, navbarConfig = {} }: DefaultLa
       <Navbar links={links} sudoLinks={sudoLinks} {...navbarConfig} />
       <Box
         sx={{
-          padding: 2,
+          padding: contentPadding,
           display: 'flex',
           justifyContent: 'center',
         }}
