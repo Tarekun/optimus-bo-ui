@@ -1,6 +1,6 @@
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { Box, Paper } from '@mui/material';
+import { Box, BoxProps, Paper } from '@mui/material';
 import { useEffect, useState } from 'react';
 
 const fadeDurationMs = 500;
@@ -12,9 +12,14 @@ const missingImagesUrl =
 interface ImageGalleryProps {
   imgSourcesList: string[];
   onIndexUpdate?: (newIndex: number) => void;
+  imgBoxProps?: BoxProps;
 }
 
-export default function ImageGallery({ imgSourcesList, onIndexUpdate = () => {} }: ImageGalleryProps) {
+export default function ImageGallery({
+  imgSourcesList,
+  onIndexUpdate = () => {},
+  imgBoxProps = {},
+}: ImageGalleryProps) {
   const [imgIndex, setImgIndex] = useState(0);
   const [opacity, setOpacity] = useState(1);
 
@@ -70,6 +75,7 @@ export default function ImageGallery({ imgSourcesList, onIndexUpdate = () => {} 
           transition: `opacity ${fadeDurationS}s ease`,
         }}
         src={imgSourcesList[imgIndex] || missingImagesUrl}
+        {...imgBoxProps}
       />
 
       <Box
