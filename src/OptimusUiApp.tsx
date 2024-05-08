@@ -1,5 +1,5 @@
 import { CssBaseline, PaletteMode, ThemeOptions, ThemeProvider, createTheme } from '@mui/material';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientConfig, QueryClientProvider } from '@tanstack/react-query';
 import { PropsWithChildren, ReactNode, useState } from 'react';
 import { PageLink } from './components/Navbar';
 import AuthenticationProvider from './contexts/AuthenticationContext';
@@ -7,8 +7,6 @@ import LanguagePackProvider, { LanguagePackProviderProps, LocaleType } from './c
 import PageNameProvider from './contexts/PageNameProvider';
 import PaletteModeProvider from './contexts/PaletteModeContext';
 import LayoutProvider, { LayoutConfig, SupportedLayouts } from './layouts/LayoutProvider';
-
-const queryClient = new QueryClient();
 
 type YesMuiConfiguration = {
   configure: true;
@@ -65,8 +63,17 @@ type LanguagePackConfiguration<LanguagePackSchema> =
   | YesLanguagePackConfiguration<LanguagePackSchema>
   | NoLanguagePackConfiguration;
 
+type YesReactQueryConfiguration = {
+  configure: true;
+  queryClientConfig?: QueryClientConfig;
+};
+type NoReactQueryConfiguration = {
+  configure: false;
+};
+type ReactQueryConfiguration = YesReactQueryConfiguration | NoReactQueryConfiguration;
+
 export type OptimusUiAppConfig<UserSchema, LanguagePackSchema> = {
-  configureReactQuery?: boolean;
+  reactQueryConfiguration?: ReactQueryConfiguration;
   navbarLinks?: PageLink[];
   sudoNavbarLinks?: PageLink[];
   layout?: SupportedLayouts;
@@ -79,16 +86,17 @@ export type OptimusUiAppConfig<UserSchema, LanguagePackSchema> = {
 export default function OptimusUiApp<UserSchema, LanguagePackSchema>({
   children,
   muiConfiguration = { configure: false },
+  reactQueryConfiguration = { configure: false },
   layoutConfiguration = { configure: false },
   languagePackConfiguration = { configure: false },
   pageTitleConfiguration = { configure: false },
   userConfiguration = { configure: false },
-  configureReactQuery = false,
 }: PropsWithChildren & OptimusUiAppConfig<UserSchema, LanguagePackSchema>) {
   const { configure: configureMui, makeTheme = () => ({}), paletteMode: userPalette } = muiConfiguration;
   const { configure: configureLayout } = layoutConfiguration;
   const { configure: configureLanguagePack, ...langConfig } = languagePackConfiguration;
   const { configure: configurePageTitles, pageTitleForPath = () => '' } = pageTitleConfiguration;
+  const { configure: configureReactQuery } = reactQueryConfiguration;
   const {
     configure: configureUsers,
     isSudo = () => false,
@@ -107,6 +115,8 @@ export default function OptimusUiApp<UserSchema, LanguagePackSchema>({
     },
     ...themeOverrides,
   });
+  // casting as at worst the arguments evaluates to undefined, which is accepted by QueryClient
+  const queryClient = new QueryClient((reactQueryConfiguration as YesReactQueryConfiguration)?.queryClientConfig);
 
   const withMui = (children: ReactNode) => (
     <ThemeProvider theme={theme}>
