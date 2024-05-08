@@ -8,17 +8,20 @@ type useAuthenticationReturn<T> = {
   refetchUser: () => void;
 };
 
-//TODO: find a better fix for this
-//eslint-disable-next-line @typescript-eslint/no-explicit-any
-const AuthenticationContext = createContext<useAuthenticationReturn<any>>({
+const nullRecord = {
   user: null,
   isSudo: false,
   refetchUser: () => {},
   isLoading: false,
-});
+};
+
+//TODO: find a better fix for this
+//eslint-disable-next-line @typescript-eslint/no-explicit-any
+const AuthenticationContext = createContext<useAuthenticationReturn<any>>(nullRecord);
 
 type AuthenticationProviderProps<T> = PropsWithChildren & {
-  fetchCurrentUser: () => Promise<T>;
+  fetchCurrentUser: () => Promise<T | null>;
+  //TODO: consider if this should also be typed T | null
   isSudo?: (user: T) => boolean;
 };
 export default function AuthenticationProvider<T>({
@@ -27,7 +30,7 @@ export default function AuthenticationProvider<T>({
   isSudo = () => false,
 }: AuthenticationProviderProps<T>) {
   const { data, refetch, isFetching } = useQuery({
-    queryKey: ['authentication-provider-user-fetching'],
+    queryKey: ['optimus-bo-ui', 'authentication-provider-user-fetching'],
     queryFn: () => {
       return fetchCurrentUser();
     },
@@ -41,8 +44,7 @@ export default function AuthenticationProvider<T>({
         isLoading: isFetching,
       }
     : {
-        user: null,
-        isSudo: false,
+        ...nullRecord,
         refetchUser: refetch,
         isLoading: isFetching,
       };

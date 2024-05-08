@@ -24,7 +24,7 @@ type MuiConfiguration = YesMuiConfiguration | NoMuiConfiguration;
 
 type YesUserConfiguration<UserSchema> = {
   configure: true;
-  fetchCurrentUser: () => Promise<UserSchema>;
+  fetchCurrentUser: () => Promise<UserSchema | null>;
   isSudo?: (user: UserSchema) => boolean;
 };
 type NoUserConfiguration = {
