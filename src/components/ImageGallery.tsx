@@ -2,7 +2,6 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Box, BoxProps, Paper } from '@mui/material';
 import { useState } from 'react';
-import 'swiper/css';
 
 const buttonsWidth = 75;
 const missingImagesUrl =
