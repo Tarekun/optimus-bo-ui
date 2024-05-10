@@ -1,12 +1,10 @@
 import { PropsWithChildren } from 'react';
-import { NavbarProps } from '../components/Navbar';
-import DefaultLayout from './DefaultLayout';
+import DefaultLayout, { DefaultLayoutProps } from './DefaultLayout';
 
 export type SupportedLayouts = 'default' | 'no-layout';
 
-export type DefaultLayoutConfig = {
+export type DefaultLayoutConfig = DefaultLayoutProps & {
   layoutType: 'default';
-  navbarConfig?: NavbarProps;
 };
 
 export type NoLayoutConfig = {
