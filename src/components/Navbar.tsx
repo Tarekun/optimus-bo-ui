@@ -96,6 +96,7 @@ export interface NavbarProps {
   navbarPosition?: 'fixed' | 'static' | 'absolute' | 'sticky' | 'relative' | undefined;
   navbarColorCode?: string;
   trailingButtons?: ReactNode;
+  header?: ReactNode;
 }
 export default function Navbar({
   links = [],
@@ -104,6 +105,7 @@ export default function Navbar({
   navbarPosition = 'fixed',
   navbarColorCode,
   trailingButtons = null,
+  header,
 }: NavbarProps) {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [navbarHeight, setNavbarHeight] = useState(0);
@@ -139,6 +141,7 @@ export default function Navbar({
         }}
       >
         <Toolbar>
+          {header}
           {isMobile ? (
             <>
               <IconButton
