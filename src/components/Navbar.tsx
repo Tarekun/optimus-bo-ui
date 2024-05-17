@@ -97,6 +97,7 @@ export interface NavbarProps {
   navbarColorCode?: string;
   trailingButtons?: ReactNode;
   header?: ReactNode;
+  enableDrawer?: boolean;
 }
 export default function Navbar({
   links = [],
@@ -106,6 +107,7 @@ export default function Navbar({
   navbarColorCode,
   trailingButtons = null,
   header,
+  enableDrawer = true,
 }: NavbarProps) {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [navbarHeight, setNavbarHeight] = useState(0);
@@ -143,51 +145,53 @@ export default function Navbar({
         <Toolbar>
           {header}
           {isMobile ? (
-            <>
-              <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="Open side menu"
-                sx={{ mr: 2 }}
-                onClick={() => setOpenDrawer(true)}
-              >
-                <MenuIcon />
-              </IconButton>
+            enableDrawer && (
+              <>
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="inherit"
+                  aria-label="Open side menu"
+                  sx={{ mr: 2 }}
+                  onClick={() => setOpenDrawer(true)}
+                >
+                  <MenuIcon />
+                </IconButton>
 
-              <Drawer
-                anchor="left"
-                open={openDrawer}
-                onClose={() => setOpenDrawer(false)}
-                ModalProps={{
-                  keepMounted: true,
-                }}
-                sx={{
-                  '& .MuiDrawer-paper': {
-                    boxSizing: 'border-box',
-                    width: DRAWER_WIDTH,
-                  },
-                }}
-              >
-                <Stack direction="row" sx={{ width: '100%', padding: 2 }}>
-                  <Typography
-                    sx={{ flexGrow: 1 }}
-                    align="center"
-                    display="flex"
-                    alignContent="center"
-                    alignItems="center"
-                  >
-                    Menu
-                  </Typography>
-                  <IconButton color="inherit" onClick={() => setOpenDrawer(false)}>
-                    <CloseIcon />
-                  </IconButton>
-                </Stack>
-                <Divider />
+                <Drawer
+                  anchor="left"
+                  open={openDrawer}
+                  onClose={() => setOpenDrawer(false)}
+                  ModalProps={{
+                    keepMounted: true,
+                  }}
+                  sx={{
+                    '& .MuiDrawer-paper': {
+                      boxSizing: 'border-box',
+                      width: DRAWER_WIDTH,
+                    },
+                  }}
+                >
+                  <Stack direction="row" sx={{ width: '100%', padding: 2 }}>
+                    <Typography
+                      sx={{ flexGrow: 1 }}
+                      align="center"
+                      display="flex"
+                      alignContent="center"
+                      alignItems="center"
+                    >
+                      Menu
+                    </Typography>
+                    <IconButton color="inherit" onClick={() => setOpenDrawer(false)}>
+                      <CloseIcon />
+                    </IconButton>
+                  </Stack>
+                  <Divider />
 
-                <PageLinkDrawer links={actualLinks} onCloseDrawer={() => setOpenDrawer(false)} />
-              </Drawer>
-            </>
+                  <PageLinkDrawer links={actualLinks} onCloseDrawer={() => setOpenDrawer(false)} />
+                </Drawer>
+              </>
+            )
           ) : (
             <PageLinkNavbar links={actualLinks} />
           )}
