@@ -143,7 +143,6 @@ export default function Navbar({
         }}
       >
         <Toolbar>
-          {header}
           {isMobile ? (
             enableDrawer && (
               <>
@@ -190,10 +189,15 @@ export default function Navbar({
 
                   <PageLinkDrawer links={actualLinks} onCloseDrawer={() => setOpenDrawer(false)} />
                 </Drawer>
+
+                {header}
               </>
             )
           ) : (
-            <PageLinkNavbar links={actualLinks} />
+            <>
+              {header}
+              <PageLinkNavbar links={actualLinks} />
+            </>
           )}
 
           {/*box che occupa tutto lo spazio possibile per forzare i bottoni seguenti ad essere sulla destra */}
