@@ -1,93 +1,12 @@
 import CloseIcon from '@mui/icons-material/Close';
 import MenuIcon from '@mui/icons-material/Menu';
-import {
-  AppBar,
-  Box,
-  Button,
-  Divider,
-  Drawer,
-  IconButton,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  Stack,
-  Toolbar,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { AppBar, Box, Divider, Drawer, IconButton, Stack, Toolbar, Typography, useTheme } from '@mui/material';
 import { ReactNode, useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthentication } from '../contexts/AuthenticationContext';
 import { useDeviceFeatures } from '../hooks';
-
-export interface PageLink {
-  label: string;
-  url: string;
-  icon?: ReactNode;
-}
-
-interface PageLinkBuilderProps {
-  links: PageLink[];
-}
-
-const DRAWER_WIDTH = 360;
-
-function shouldHighlight(url: string, pathname: string) {
-  const isHome = url === '/' || url === '';
-  // la logica è statsWith per funzionare "ad albero"
-  // nel caso della home si test l'uguaglianza perché tutti i percorsi iniziano con '/'
-  return isHome ? url === pathname : pathname.startsWith(url);
-}
-
-function PageLinkNavbar({ links }: PageLinkBuilderProps) {
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
-
-  return (
-    <Stack direction="row" spacing={2} color="inherit">
-      {links.map((link) => (
-        <Button
-          key={link.url}
-          //senza questo il bottone non si renderizza
-          color="inherit"
-          onClick={() => navigate(link.url)}
-          size={shouldHighlight(link.url, pathname) ? 'large' : 'medium'}
-          sx={{
-            fontWeight: shouldHighlight(link.url, pathname) ? 'bold' : '',
-          }}
-        >
-          {link.label}
-        </Button>
-      ))}
-    </Stack>
-  );
-}
-
-function PageLinkDrawer({ links, onCloseDrawer }: PageLinkBuilderProps & { onCloseDrawer: () => void }) {
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
-
-  return (
-    <List>
-      {links.map((link) => (
-        <ListItemButton
-          key={link.url}
-          //use this variant prop to highlight the current page
-          selected={shouldHighlight(link.url, pathname)}
-          onClick={() => {
-            navigate(link.url);
-            onCloseDrawer();
-          }}
-        >
-          <ListItemIcon>{link.icon}</ListItemIcon>
-          {link.label}
-        </ListItemButton>
-      ))}
-    </List>
-  );
-}
-
-export type NavbarStyling = 'solid' | 'transparent';
+import { DRAWER_WIDTH, NavbarStyling, PageLink } from './commons/navbar';
+import PageLinksDrawer from './subComponents/PageLinksDrawer';
+import PageLinksNavbar from './subComponents/PageLinksNavbar';
 
 export interface NavbarProps {
   links?: PageLink[];
@@ -187,17 +106,14 @@ export default function Navbar({
                   </Stack>
                   <Divider />
 
-                  <PageLinkDrawer links={actualLinks} onCloseDrawer={() => setOpenDrawer(false)} />
+                  <PageLinksDrawer links={actualLinks} onCloseDrawer={() => setOpenDrawer(false)} />
                 </Drawer>
 
                 {header}
               </>
             )
           ) : (
-            <>
-              {header}
-              <PageLinkNavbar links={actualLinks} />
-            </>
+            <PageLinksNavbar links={actualLinks} header={header} />
           )}
 
           {/*box che occupa tutto lo spazio possibile per forzare i bottoni seguenti ad essere sulla destra */}

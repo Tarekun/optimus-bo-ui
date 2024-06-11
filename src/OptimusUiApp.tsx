@@ -1,7 +1,7 @@
 import { CssBaseline, PaletteMode, ThemeOptions, ThemeProvider, createTheme } from '@mui/material';
 import { QueryClient, QueryClientConfig, QueryClientProvider } from '@tanstack/react-query';
 import { PropsWithChildren, ReactNode, useState } from 'react';
-import { PageLink } from './components/Navbar';
+import { PageLink } from './components/commons/navbar';
 import AuthenticationProvider from './contexts/AuthenticationContext';
 import LanguagePackProvider, { LanguagePackProviderProps, LocaleType } from './contexts/LanguagePackContext';
 import PageNameProvider from './contexts/PageNameProvider';
