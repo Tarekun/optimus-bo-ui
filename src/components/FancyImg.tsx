@@ -1,8 +1,9 @@
-import { Box, Paper } from '@mui/material';
+import { Box, BoxProps, Paper } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 
 const borderRadius = 5;
 const maxOffset = 16;
+export const fancyImgDefaultOffset = 16;
 
 export interface FancyImgProps {
   src: string;
@@ -11,7 +12,9 @@ export interface FancyImgProps {
   backgroundColor?: string;
   showBorder?: boolean;
   borderColor?: string;
-  horizontalOffset?: 'left' | 'right';
+  horizontalOffset?: number;
+  verticalOffset?: number;
+  rootBoxProps?: BoxProps;
 }
 export default function FancyImg({
   src,
@@ -20,7 +23,9 @@ export default function FancyImg({
   backgroundColor = 'primary.main',
   showBorder = false,
   borderColor = 'primary.main',
-  horizontalOffset = 'right',
+  horizontalOffset = fancyImgDefaultOffset,
+  verticalOffset,
+  rootBoxProps = {},
 }: FancyImgProps) {
   const [offset, setOffset] = useState(0);
   const imageRef = useRef<HTMLDivElement>(null);
@@ -46,7 +51,7 @@ export default function FancyImg({
   }, []);
 
   return (
-    <Box sx={{ padding: 5 }}>
+    <Box {...rootBoxProps} sx={{ padding: 5, ...rootBoxProps.sx }}>
       <Box sx={{ width: 'fit-content', position: 'relative', height: 'fit-content' }}>
         <Paper
           elevation={24}
@@ -78,8 +83,8 @@ export default function FancyImg({
             elevation={0}
             sx={{
               position: 'absolute',
-              top: offset,
-              left: horizontalOffset === 'right' ? 16 : -16,
+              top: verticalOffset ?? offset,
+              left: horizontalOffset ?? fancyImgDefaultOffset,
               backgroundColor: backgroundColor,
               width: '100%',
               height: '100%',
